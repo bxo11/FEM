@@ -1,7 +1,6 @@
 #include <iostream>
-#include <fstream>
 #include <cstdlib>
-#include <string>
+
 using namespace std;
 
 struct Elem4
@@ -33,7 +32,7 @@ int reverse_J(double J[2][2]);
 void print_M(double J[2][2]);
 void print_M(double J[4][4]);
 
-inline int fill_J(double J[2][2], Elem4* e, double xy[2][4], int i) {
+int fill_J(double J[2][2], Elem4* e, double xy[2][4], int i) {
 	for (int k = 0; k < 4; k++) {
 		J[0][0] += e->tab_ksi[i][k] * xy[0][k];
 		J[0][1] += e->tab_ksi[i][k] * xy[1][k];
@@ -43,12 +42,12 @@ inline int fill_J(double J[2][2], Elem4* e, double xy[2][4], int i) {
 	return 0;
 }
 
-inline double det_J(double J[2][2])
+double det_J(double J[2][2])
 {
 	return (J[0][0] * J[1][1]) - (J[0][1] * J[1][0]);
 }
 
-inline int reverse_J(double J[2][2])
+int reverse_J(double J[2][2])
 {
 	swap(J[0][0], J[1][1]);
 	J[0][1] *= -1.;
@@ -56,14 +55,14 @@ inline int reverse_J(double J[2][2])
 	return 0;
 }
 
-inline void print_M(double J[2][2])
+void print_M(double J[2][2])
 {
 	cout << "Jacobi";
 	cout << endl << "[ " << J[0][0] << ", " << J[0][1];
 	cout << endl << "  " << J[1][0] << ", " << J[1][1] << " ]";
 }
 
-inline void print_M(double M[4][4])
+void print_M(double M[4][4])
 {
 	for (int i = 0; i < 4; i++) {
 		for (int j = 0; j < 4; j++) {

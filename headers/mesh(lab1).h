@@ -1,7 +1,5 @@
-#include <iostream>
 #include <fstream>
-#include <cstdlib>
-#include <string>
+#include "lab3.h"
 using namespace std;
 
 struct Node
@@ -58,7 +56,7 @@ int GlobalData::ReadFromFile()
 	return 0;
 }
 
-inline GlobalData::GlobalData()
+GlobalData::GlobalData()
 {
 	GlobalData* GB = this;
 
@@ -94,7 +92,7 @@ void meshInit(GlobalData* GB, Node* ND, Element* Elem)
 	}
 }
 
-inline void meshPrint(GlobalData* GB, Node* ND, Element* Elem)
+void meshPrint(GlobalData* GB, Node* ND, Element* Elem)
 {
 	for (int i = 0; i < GB->nN; i++) {
 		cout << ND[i].x << ", " << ND[i].y << endl;

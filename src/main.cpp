@@ -1,9 +1,5 @@
-﻿#include <iostream>
-#include <fstream>
-#include <cstdlib>
-#include <string>
-#include "lab3.h"
-#include "mesh(lab1).h"
+﻿#include "../headers/lab3.h"
+#include "../headers/mesh(lab1).h"
 
 using namespace std;
 double** global_H;

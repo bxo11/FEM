@@ -1,7 +1,4 @@
-#include <iostream>
-#include <fstream>
 #include <cstdlib>
-#include <string>
 using namespace std;
 
 double f(double x, double y);
