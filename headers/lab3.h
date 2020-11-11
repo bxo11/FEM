@@ -33,7 +33,7 @@ int reverse_J(double J[2][2]);
 void print_M(double J[2][2]);
 void print_M(double J[4][4]);
 
-int fill_J(double J[2][2], Elem4* e, double xy[2][4], int i) {
+inline int fill_J(double J[2][2], Elem4* e, double xy[2][4], int i) {
 	for (int k = 0; k < 4; k++) {
 		J[0][0] += e->tab_ksi[i][k] * xy[0][k];
 		J[0][1] += e->tab_ksi[i][k] * xy[1][k];

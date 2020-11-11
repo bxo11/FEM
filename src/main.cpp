@@ -2,8 +2,8 @@
 #include <fstream>
 #include <cstdlib>
 #include <string>
-#include "../headers/mesh(lab1).h"
-#include "../headers/lab3.h"
+#include "lab3.h"
+#include "mesh(lab1).h"
 
 using namespace std;
 double** global_H;
@@ -35,15 +35,8 @@ int main()
 
 		double xy[2][4] = { ND[Elem[i].ID[0]].x,ND[Elem[i].ID[1]].x,ND[Elem[i].ID[2]].x,ND[Elem[i].ID[3]].x,
 							ND[Elem[i].ID[0]].y,ND[Elem[i].ID[1]].y,ND[Elem[i].ID[2]].y,ND[Elem[i].ID[3]].y, };
-		/*for (int i = 0; i < 2; i++) {
-			for (int j = 0; j < 4; j++) {
-				cout << xy[i][j] << ", ";
-			}
-		}
-		cout << endl;*/
 
 		Elem[i].initialize_H(xy, e);
-		//print_M(Elem[i].H);
 
 		for (int k = 0; k < 4; k++) {
 			for (int l = 0; l < 4; l++) {
