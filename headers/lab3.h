@@ -8,13 +8,20 @@ using namespace std;
 
 struct Elem4
 {
+	int npc;
 	double value = 1. / sqrt(3);
-	double ksi[4] = { -value,value,value,-value };
-	double eta[4] = { -value,-value,value,value };
-	double tab_ksi[4][4];
-	double tab_eta[4][4];
+	double* ksi;
+	double* eta ;
+	double* w1 ;
+	double* w2 ;
+	//double ksi[4] = { -value,value,value,-value };
+	//double eta[4] = { -value,-value,value,value };
+	//double tab_ksi[4][4];
+	//double tab_eta[4][4];
+	double** tab_ksi;
+	double** tab_eta;
 
-	Elem4();
+	Elem4(int npc);
 };
 
 int fill_J(double J[2][2], Elem4* e, double xy[2][4], int i);

@@ -24,7 +24,7 @@ struct GlobalData
 	double dx, dy;
 	int temp_n;
 
-	double H, W, nH, nW; //from file
+	double H, W, nH, nW, npc; //from file
 	double nE, nN;
 	int ReadFromFile();
 	GlobalData();

@@ -12,6 +12,7 @@ int GlobalData::ReadFromFile()
 			plik >> W;
 			plik >> nH;
 			plik >> nW;
+			plik >> npc;
 		}
 		plik.close();
 	}
@@ -22,6 +23,7 @@ int GlobalData::ReadFromFile()
 		W = 0.1;
 		nH = 4;
 		nW = 4;
+		npc = 2;
 	}
 
 	return 0;
@@ -32,6 +34,7 @@ GlobalData::GlobalData()
 	GlobalData* GB = this;
 
 	GB->ReadFromFile();
+	npc = npc * npc;
 
 	dy = GB->H / (GB->nH - 1);
 	dx = GB->W / (GB->nW - 1);
@@ -84,7 +87,7 @@ int Element::initialize_H(double xy[2][4], Elem4* e) {
 	double my[4][4];
 	double m_end[4][4];
 
-	for (int x = 0; x < 4; x++) {
+	for (int x = 0; x < e->npc; x++) {
 		cout << x + 1 << " punkt calkowania" << endl;
 		//zerowanie J1
 		for (int i = 0; i < 2; i++) {
@@ -140,18 +143,20 @@ int Element::initialize_H(double xy[2][4], Elem4* e) {
 		for (int i = 0; i < 4; i++) {
 			for (int j = 0; j < 4; j++) {
 				m_end[i][j] = my[i][j] + mx[i][j];
-				m_end[i][j] *= 25 * detJ; //k(wspolczynnik przewodzenia ciepla)=30
+				m_end[i][j] *= 25 * detJ; //k(wspolczynnik przewodzenia ciepla)=25
 			}
 		}
 
 		print_M(m_end);
 		cout << endl << endl;
 
-		for (int i = 0; i < 4; i++) {
-			for (int j = 0; j < 4; j++) {
-				H[i][j] += m_end[i][j];
+	
+			for (int i = 0; i < 4; i++) {
+				for (int j = 0; j < 4; j++) {
+					H[i][j] += m_end[i][j]*e->w1[x] * e->w2[x];
+				}
 			}
-		}
+		
 	}
 
 	return 0;

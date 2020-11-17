@@ -12,7 +12,7 @@ int main()
 	meshInit(GB, ND, Elem);
 	//meshPrint(GB, ND, Elem);
 
-	Elem4* e = new Elem4;
+	Elem4* e = new Elem4(GB->npc);
 
 	global_H = new double* [GB->nN];
 	for (int i = 0; i < GB->nN; ++i) {
@@ -26,8 +26,6 @@ int main()
 	}
 
 	for (int i = 0; i < GB->nE; i++) {
-		//double xy[2][4] = { 0.,4.,4.,0.,
-		//0., 0., 6., 6.
 
 		double xy[2][4] = { ND[Elem[i].ID[0]].x,ND[Elem[i].ID[1]].x,ND[Elem[i].ID[2]].x,ND[Elem[i].ID[3]].x,
 							ND[Elem[i].ID[0]].y,ND[Elem[i].ID[1]].y,ND[Elem[i].ID[2]].y,ND[Elem[i].ID[3]].y, };
@@ -44,6 +42,7 @@ int main()
 	//system("cls");
 	meshPrint(GB, ND, Elem);
 
+	cout << endl;
 	for (int k = 0; k < GB->nN; k++) {
 		for (int l = 0; l < GB->nN; l++) {
 			cout << global_H[k][l] << ", ";
