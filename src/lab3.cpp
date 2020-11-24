@@ -36,12 +36,10 @@ Elem4::Elem4(int a_npc) {
 	case 9:
 
 		value = sqrt(3. / 5.);
-		//ksi = new double[9]{ -value,0.,value,-value,0.,value,-value,0.,value };
-		//eta = new double[9]{ -value,-value,-value,0.,0.,0.,value,value,value };
 		ksi = new double[9]{ -value,0.,value,value,0.,-value,value,0.,-value };
 		eta = new double[9]{ -value,-value,-value,0.,0.,0.,value,value,value };
 		w1 = new double[9]{ 5. / 9, 5. / 9, 5. / 9, 8. / 9, 8. / 9, 8. / 9, 5. / 9, 5. / 9, 5. / 9 };
-		w2 = new double[9]{ 5. / 9, 5. / 9, 5. / 9, 8. / 9, 8. / 9, 8. / 9, 5. / 9, 5. / 9, 5. / 9 };
+		w2 = new double[9]{ 5. / 9, 8./9, 5. / 9, 5. / 9, 8. / 9, 5. / 9, 5. / 9, 8. / 9, 5. / 9 };
 		break;
 
 	default:

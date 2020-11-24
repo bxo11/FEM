@@ -13,6 +13,7 @@ int GlobalData::ReadFromFile()
 			plik >> nH;
 			plik >> nW;
 			plik >> npc;
+			plik >> k;
 		}
 		plik.close();
 	}
@@ -24,6 +25,7 @@ int GlobalData::ReadFromFile()
 		nH = 4;
 		nW = 4;
 		npc = 2;
+		k = 25;
 	}
 
 	return 0;
@@ -77,7 +79,7 @@ void meshPrint(GlobalData* GB, Node* ND, Element* Elem)
 	}
 }
 
-int Element::initialize_H(double xy[2][4], Elem4* e) {
+int Element::initialize_H(double xy[2][4], Elem4* e, GlobalData* GB) {
 	double J[2][2] = { 0.,0.,0.,0. };
 	double detJ;
 
@@ -143,20 +145,18 @@ int Element::initialize_H(double xy[2][4], Elem4* e) {
 		for (int i = 0; i < 4; i++) {
 			for (int j = 0; j < 4; j++) {
 				m_end[i][j] = my[i][j] + mx[i][j];
-				m_end[i][j] *= 25 * detJ; //k(wspolczynnik przewodzenia ciepla)=25
+				m_end[i][j] *= detJ * GB->k; 
 			}
 		}
 
 		print_M(m_end);
 		cout << endl << endl;
 
-	
-			for (int i = 0; i < 4; i++) {
-				for (int j = 0; j < 4; j++) {
-					H[i][j] += m_end[i][j]*e->w1[x] * e->w2[x];
-				}
+		for (int i = 0; i < 4; i++) {
+			for (int j = 0; j < 4; j++) {
+				H[i][j] += m_end[i][j] * e->w1[x] * e->w2[x];
 			}
-		
+		}
 	}
 
 	return 0;

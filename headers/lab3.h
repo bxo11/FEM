@@ -11,14 +11,10 @@ struct Elem4
 	int npc;
 	double value = 1. / sqrt(3);
 	double* ksi;
-	double* eta ;
-	double* w1 ;
-	double* w2 ;
-	//double ksi[4] = { -value,value,value,-value };
-	//double eta[4] = { -value,-value,value,value };
-	//double tab_ksi[4][4];
-	//double tab_eta[4][4];
-	double** tab_ksi;
+	double* eta;
+	double* w1;
+	double* w2;
+	double** tab_ksi; // dn/dksi
 	double** tab_eta;
 
 	Elem4(int npc);

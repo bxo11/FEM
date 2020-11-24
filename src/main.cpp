@@ -10,7 +10,6 @@ int main()
 	Node* ND = new Node[GB->nN];
 	Element* Elem = new Element[GB->nE];
 	meshInit(GB, ND, Elem);
-	//meshPrint(GB, ND, Elem);
 
 	Elem4* e = new Elem4(GB->npc);
 
@@ -26,11 +25,11 @@ int main()
 	}
 
 	for (int i = 0; i < GB->nE; i++) {
-
 		double xy[2][4] = { ND[Elem[i].ID[0]].x,ND[Elem[i].ID[1]].x,ND[Elem[i].ID[2]].x,ND[Elem[i].ID[3]].x,
 							ND[Elem[i].ID[0]].y,ND[Elem[i].ID[1]].y,ND[Elem[i].ID[2]].y,ND[Elem[i].ID[3]].y, };
 
-		Elem[i].initialize_H(xy, e);
+		Elem[i].initialize_H(xy, e,GB);
+		print_M(Elem[i].H);
 
 		for (int k = 0; k < 4; k++) {
 			for (int l = 0; l < 4; l++) {
