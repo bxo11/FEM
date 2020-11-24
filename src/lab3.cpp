@@ -14,10 +14,16 @@ Elem4::Elem4(int a_npc) {
 		tab_eta[i] = new double[4];
 	}
 
+	N = new double* [npc];
+	for (int i = 0; i < npc; ++i) {
+		N[i] = new double[4];
+	}
+
 	for (int k = 0; k < npc; k++) {
 		for (int l = 0; l < 4; l++) {
 			tab_ksi[k][l] = 0;
 			tab_eta[k][l] = 0;
+			N[k][l] = 0;
 		}
 	}
 
@@ -58,6 +64,11 @@ Elem4::Elem4(int a_npc) {
 		tab_eta[i][1] = -1. / 4 * (1 + ksi[i]);
 		tab_eta[i][2] = 1. / 4 * (1 + ksi[i]);
 		tab_eta[i][3] = 1. / 4 * (1 - ksi[i]);
+
+		N[i][0] = 1. / 4 * (1 - ksi[i]) * (1 - eta[i]);
+		N[i][1] = 1. / 4 * (1 + ksi[i]) * (1 - eta[i]);
+		N[i][2] = 1. / 4 * (1 + ksi[i]) * (1 + eta[i]);
+		N[i][3] = 1. / 4 * (1 - ksi[i]) * (1 + eta[i]);
 	}
 
 	//for (int k = 0; k < npc; k++) {

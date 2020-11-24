@@ -2,7 +2,6 @@
 #include "../headers/mesh(lab1).h"
 
 using namespace std;
-double** global_H;
 
 int main()
 {
@@ -12,28 +11,18 @@ int main()
 	meshInit(GB, ND, Elem);
 
 	Elem4* e = new Elem4(GB->npc);
-
-	global_H = new double* [GB->nN];
-	for (int i = 0; i < GB->nN; ++i) {
-		global_H[i] = new double[GB->nN];
-	}
-
-	for (int k = 0; k < GB->nN; k++) {
-		for (int l = 0; l < GB->nN; l++) {
-			global_H[k][l] = 0;
-		}
-	}
+	SoE* soe = new SoE(GB);
 
 	for (int i = 0; i < GB->nE; i++) {
 		double xy[2][4] = { ND[Elem[i].ID[0]].x,ND[Elem[i].ID[1]].x,ND[Elem[i].ID[2]].x,ND[Elem[i].ID[3]].x,
 							ND[Elem[i].ID[0]].y,ND[Elem[i].ID[1]].y,ND[Elem[i].ID[2]].y,ND[Elem[i].ID[3]].y, };
 
-		Elem[i].initialize_H(xy, e,GB);
-		print_M(Elem[i].H);
+		Elem[i].initialize_H_and_C(xy, e,GB);
 
 		for (int k = 0; k < 4; k++) {
 			for (int l = 0; l < 4; l++) {
-				global_H[Elem[i].ID[k]][Elem[i].ID[l]] += Elem[i].H[k][l];
+				soe->global_H[Elem[i].ID[k]][Elem[i].ID[l]] += Elem[i].local_H[k][l];
+				soe->global_C[Elem[i].ID[k]][Elem[i].ID[l]] += Elem[i].local_C[k][l];
 			}
 		}
 	}
@@ -44,7 +33,15 @@ int main()
 	cout << endl;
 	for (int k = 0; k < GB->nN; k++) {
 		for (int l = 0; l < GB->nN; l++) {
-			cout << global_H[k][l] << ", ";
+			cout << soe->global_H[k][l] << ", ";
+		}
+		cout << endl;
+	}
+
+	cout << endl;
+	for (int k = 0; k < GB->nN; k++) {
+		for (int l = 0; l < GB->nN; l++) {
+			cout << soe->global_C[k][l] << ", ";
 		}
 		cout << endl;
 	}

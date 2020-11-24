@@ -16,6 +16,7 @@ struct Elem4
 	double* w2;
 	double** tab_ksi; // dn/dksi
 	double** tab_eta;
+	double** N;
 
 	Elem4(int npc);
 };

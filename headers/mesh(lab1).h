@@ -7,7 +7,7 @@ using namespace std;
 
 struct Node
 {
-	double x, y;
+	double x, y, t0;
 };
 
 struct GlobalData
@@ -15,7 +15,7 @@ struct GlobalData
 	double dx, dy;
 	int temp_n;
 
-	double H, W, nH, nW, npc, k; //from file
+	double local_H, W, nH, nW, npc, k, ro, cp, t0; //from file
 	double nE, nN;
 	int ReadFromFile();
 	GlobalData();
@@ -24,10 +24,19 @@ struct GlobalData
 struct Element
 {
 	int ID[4];
-	double H[4][4];
-	int initialize_H(double xy[2][4], Elem4* e, GlobalData* GB);
+	double local_H[4][4];
+	double local_C[4][4];
+	int initialize_H_and_C(double xy[2][4], Elem4* e, GlobalData* GB);
 
 	Element();
+};
+
+struct SoE
+{
+	double** global_H;
+	double** global_C;
+
+	SoE(GlobalData* GB);
 };
 
 void meshInit(GlobalData* GB, Node* ND, Element* Elem);

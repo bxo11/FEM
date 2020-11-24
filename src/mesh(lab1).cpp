@@ -8,24 +8,30 @@ int GlobalData::ReadFromFile()
 	{
 		while (!plik.eof())
 		{
-			plik >> H;
+			plik >> local_H;
 			plik >> W;
 			plik >> nH;
 			plik >> nW;
 			plik >> npc;
 			plik >> k;
+			plik >> ro;
+			plik >> cp;
+			plik >> t0;
 		}
 		plik.close();
 	}
 	else {
 		cout << "data.txt file is missing, reading default data" << endl;
 		system("pause");
-		H = 0.1;
+		local_H = 0.1;
 		W = 0.1;
 		nH = 4;
 		nW = 4;
 		npc = 2;
 		k = 25;
+		ro = 7800;
+		cp = 700;
+		t0 = 100;
 	}
 
 	return 0;
@@ -38,7 +44,7 @@ GlobalData::GlobalData()
 	GB->ReadFromFile();
 	npc = npc * npc;
 
-	dy = GB->H / (GB->nH - 1);
+	dy = GB->local_H / (GB->nH - 1);
 	dx = GB->W / (GB->nW - 1);
 
 	GB->nE = (GB->nH - 1) * (GB->nW - 1);
@@ -79,7 +85,7 @@ void meshPrint(GlobalData* GB, Node* ND, Element* Elem)
 	}
 }
 
-int Element::initialize_H(double xy[2][4], Elem4* e, GlobalData* GB) {
+int Element::initialize_H_and_C(double xy[2][4], Elem4* e, GlobalData* GB) {
 	double J[2][2] = { 0.,0.,0.,0. };
 	double detJ;
 
@@ -90,8 +96,8 @@ int Element::initialize_H(double xy[2][4], Elem4* e, GlobalData* GB) {
 	double m_end[4][4];
 
 	for (int x = 0; x < e->npc; x++) {
-		cout << x + 1 << " punkt calkowania" << endl;
-		//zerowanie J1
+		//cout << x + 1 << " integration point" << endl;
+		//filling J with zeros
 		for (int i = 0; i < 2; i++) {
 			for (int j = 0; j < 2; j++) {
 				J[i][j] = 0;
@@ -99,25 +105,25 @@ int Element::initialize_H(double xy[2][4], Elem4* e, GlobalData* GB) {
 		}
 
 		fill_J(J, e, xy, x);
-		print_M(J);
+		//print_M(J);
 
 		detJ = det_J(J);
-		cout << endl << "det: " << detJ << endl;
+		//cout << endl << "det: " << detJ << endl;
 
 		reverse_J(J);
-		cout << "reverse";
-		print_M(J);
+		//cout << "reverse";
+		//print_M(J);
 
 		wynik_x[0] = (1. / detJ) * (J[0][0] * e->tab_ksi[x][0] + J[0][1] * e->tab_eta[x][0]);
 		wynik_x[1] = (1. / detJ) * (J[0][0] * e->tab_ksi[x][1] + J[0][1] * e->tab_eta[x][1]);
 		wynik_x[2] = (1. / detJ) * (J[0][0] * e->tab_ksi[x][2] + J[0][1] * e->tab_eta[x][2]);
 		wynik_x[3] = (1. / detJ) * (J[0][0] * e->tab_ksi[x][3] + J[0][1] * e->tab_eta[x][3]);
 
-		cout << endl;
+		/*cout << endl;
 		for (int i = 0; i < 4; i++) {
 			cout << wynik_x[i] << ", ";
 		}
-		cout << endl;
+		cout << endl;*/
 
 		for (int i = 0; i < 4; i++) {
 			for (int j = 0; j < 4; j++) {
@@ -130,11 +136,11 @@ int Element::initialize_H(double xy[2][4], Elem4* e, GlobalData* GB) {
 		wynik_y[2] = (1. / detJ) * (J[1][0] * e->tab_ksi[x][2] + J[1][1] * e->tab_eta[x][2]);
 		wynik_y[3] = (1. / detJ) * (J[1][0] * e->tab_ksi[x][3] + J[1][1] * e->tab_eta[x][3]);
 
-		cout << endl;
+		/*cout << endl;
 		for (int i = 0; i < 4; i++) {
 			cout << wynik_y[i] << ", ";
 		}
-		cout << endl;
+		cout << endl;*/
 
 		for (int i = 0; i < 4; i++) {
 			for (int j = 0; j < 4; j++) {
@@ -149,23 +155,48 @@ int Element::initialize_H(double xy[2][4], Elem4* e, GlobalData* GB) {
 			}
 		}
 
-		print_M(m_end);
-		cout << endl << endl;
+		//print_M(m_end);
+		//cout << endl << endl;
 
 		for (int i = 0; i < 4; i++) {
 			for (int j = 0; j < 4; j++) {
-				H[i][j] += m_end[i][j] * e->w1[x] * e->w2[x];
+				local_H[i][j] += m_end[i][j] * e->w1[x] * e->w2[x];
+				local_C[i][j] += e->N[x][i] * e->N[x][j] * GB->cp * GB->ro * detJ * e->w1[x] * e->w2[x] ;
 			}
 		}
 	}
-
 	return 0;
 }
 Element::Element() {
-	//zerowanie H
+	//filling H with zeros
 	for (int i = 0; i < 4; i++) {
 		for (int j = 0; j < 4; j++) {
-			H[i][j] = 0;
+			local_H[i][j] = 0;
+		}
+	}
+
+	//filling C with zeros
+	for (int i = 0; i < 4; i++) {
+		for (int j = 0; j < 4; j++) {
+			local_C[i][j] = 0;
+		}
+	}
+}
+
+SoE::SoE(GlobalData* GB){
+	//init & filling global_H and global_C with zeros
+	global_H = new double* [GB->nN];
+	for (int i = 0; i < GB->nN; ++i) {
+		global_H[i] = new double[GB->nN];
+	}
+	global_C = new double* [GB->nN];
+	for (int i = 0; i < GB->nN; ++i) {
+		global_C[i] = new double[GB->nN];
+	}
+	for (int k = 0; k < GB->nN; k++) {
+		for (int l = 0; l < GB->nN; l++) {
+			global_H[k][l] = 0;
+			global_C[k][l] = 0;
 		}
 	}
 }
