@@ -81,7 +81,7 @@ Elem4::Elem4(int a_npc) {
 }
 
 int fill_J(double J[2][2], Elem4* e, double xy[2][4], int i) {
-	for (int k = 0; k < e->npc; k++) {
+	for (int k = 0; k < 4; k++) {
 		J[0][0] += e->tab_ksi[i][k] * xy[0][k];
 		J[0][1] += e->tab_ksi[i][k] * xy[1][k];
 		J[1][0] += e->tab_eta[i][k] * xy[0][k];

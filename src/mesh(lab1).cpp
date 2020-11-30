@@ -105,7 +105,8 @@ int Element::initialize_H_and_C(double xy[2][4], Elem4* e, GlobalData* GB) {
 		}
 
 		fill_J(J, e, xy, x);
-		//print_M(J);
+		cout << endl;
+		print_M(J);
 
 		detJ = det_J(J);
 		//cout << endl << "det: " << detJ << endl;
