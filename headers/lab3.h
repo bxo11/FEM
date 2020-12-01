@@ -6,6 +6,8 @@
 
 using namespace std;
 
+
+
 struct Elem4
 {
 	int npc;
@@ -18,7 +20,20 @@ struct Elem4
 	double** tab_eta;
 	double** N;
 
-	Elem4(int npc);
+	struct Surface
+	{
+		int npc;
+		double* pcKsi;
+		double* pcEta;
+		double* wpc;
+		double* N1;
+		double* N2;
+		double surface_N[4];
+		
+		Surface(int npc, int x);
+	};
+
+	Elem4(int a_npc);
 };
 
 int fill_J(double J[2][2], Elem4* e, double xy[2][4], int i);

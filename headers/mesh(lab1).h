@@ -8,6 +8,7 @@ using namespace std;
 struct Node
 {
 	double x, y, t0;
+	int BC;
 };
 
 struct GlobalData
@@ -26,7 +27,7 @@ struct Element
 	int ID[4];
 	double local_H[4][4];
 	double local_C[4][4];
-	int initialize_H_and_C(double xy[2][4], Elem4* e, GlobalData* GB);
+	int initialize_H_and_C(double xy[2][4], Elem4* e, GlobalData* GB, Node ND[4]);
 
 	Element();
 };

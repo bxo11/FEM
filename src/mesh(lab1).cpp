@@ -58,6 +58,13 @@ void meshInit(GlobalData* GB, Node* ND, Element* Elem)
 		for (int j = 0; j < GB->nH; j++) {
 			ND[GB->temp_n].x = i * GB->dx;
 			ND[GB->temp_n].y = j * GB->dy;
+
+			if (i == 0 || i == GB->nW-1 || j == 0 || j == GB->nH-1) {
+				ND[GB->temp_n].BC = 1;
+			}
+			else {
+			ND[GB->temp_n].BC = 0;
+			}
 			GB->temp_n++;
 		}
 	}
@@ -77,7 +84,7 @@ void meshInit(GlobalData* GB, Node* ND, Element* Elem)
 void meshPrint(GlobalData* GB, Node* ND, Element* Elem)
 {
 	for (int i = 0; i < GB->nN; i++) {
-		cout << ND[i].x << ", " << ND[i].y << endl;
+		cout << ND[i].x << ", " << ND[i].y << ", " << ND[i].BC << endl;
 	}
 	cout << endl;
 	for (int i = 0; i < GB->nE; i++) {
@@ -85,7 +92,7 @@ void meshPrint(GlobalData* GB, Node* ND, Element* Elem)
 	}
 }
 
-int Element::initialize_H_and_C(double xy[2][4], Elem4* e, GlobalData* GB) {
+int Element::initialize_H_and_C(double xy[2][4], Elem4* e, GlobalData* GB, Node ND[4]) {
 	double J[2][2] = { 0.,0.,0.,0. };
 	double detJ;
 
@@ -105,8 +112,8 @@ int Element::initialize_H_and_C(double xy[2][4], Elem4* e, GlobalData* GB) {
 		}
 
 		fill_J(J, e, xy, x);
-		cout << endl;
-		print_M(J);
+		//cout << endl;
+		//print_M(J);
 
 		detJ = det_J(J);
 		//cout << endl << "det: " << detJ << endl;
@@ -152,7 +159,7 @@ int Element::initialize_H_and_C(double xy[2][4], Elem4* e, GlobalData* GB) {
 		for (int i = 0; i < 4; i++) {
 			for (int j = 0; j < 4; j++) {
 				m_end[i][j] = my[i][j] + mx[i][j];
-				m_end[i][j] *= detJ * GB->k; 
+				m_end[i][j] *= detJ * GB->k;
 			}
 		}
 
@@ -162,10 +169,96 @@ int Element::initialize_H_and_C(double xy[2][4], Elem4* e, GlobalData* GB) {
 		for (int i = 0; i < 4; i++) {
 			for (int j = 0; j < 4; j++) {
 				local_H[i][j] += m_end[i][j] * e->w1[x] * e->w2[x];
-				local_C[i][j] += e->N[x][i] * e->N[x][j] * GB->cp * GB->ro * detJ * e->w1[x] * e->w2[x] ;
+				local_C[i][j] += e->N[x][i] * e->N[x][j] * GB->cp * GB->ro * detJ * e->w1[x] * e->w2[x];
 			}
 		}
 	}
+
+	cout << ND[0].BC << endl;
+	cout << ND[1].BC << endl;
+	cout << ND[2].BC << endl;
+	cout << ND[3].BC << endl;
+
+	double bc_matrix[4][4];
+	for (int i = 0; i < 4; i++) {
+		for (int j = 0; j < 4; j++) {
+			bc_matrix[i][j] = 0;
+		}
+	}
+
+	if (ND[0].BC == 1 && ND[1].BC == 1) {
+		Elem4::Surface* surface = new Elem4::Surface(e->npc, 0);
+		for (int h = 0; h < surface->npc; h++) {
+			surface->surface_N[0] = surface->N1[h];
+			surface->surface_N[1] = surface->N2[h];
+			surface->surface_N[2] = 0;
+			surface->surface_N[3] = 0;
+
+			for (int i = 0; i < 4; i++) {
+				for (int j = 0; j < 4; j++) {
+					bc_matrix[i][j] += surface->surface_N[i] * surface->surface_N[j] * 25 * (0.0333333 / 2.);
+				}
+			}
+		}
+	}
+	
+
+	if (ND[1].BC == 1 && ND[2].BC == 1) {
+		Elem4::Surface* surface = new Elem4::Surface(e->npc, 1);
+		for (int h = 0; h < surface->npc; h++) {
+			surface->surface_N[0] = 0;
+			surface->surface_N[1] = surface->N1[h];
+			surface->surface_N[2] = surface->N2[h];
+			surface->surface_N[3] = 0;
+
+			for (int i = 0; i < 4; i++) {
+				for (int j = 0; j < 4; j++) {
+					bc_matrix[i][j] += surface->surface_N[i] * surface->surface_N[j] * 25 * (0.0333333 / 2.);
+				}
+			}
+		}
+	}
+
+	if (ND[2].BC == 1 && ND[3].BC == 1) {
+		Elem4::Surface* surface = new Elem4::Surface(e->npc, 2);
+		for (int h = 0; h < surface->npc; h++) {
+			surface->surface_N[0] = 0;
+			surface->surface_N[1] = 0;
+			surface->surface_N[2] = surface->N1[h];
+			surface->surface_N[3] = surface->N2[h];
+
+			for (int i = 0; i < 4; i++) {
+				for (int j = 0; j < 4; j++) {
+					bc_matrix[i][j] += surface->surface_N[i] * surface->surface_N[j] * 25 * (0.0333333 / 2.);
+				}
+			}
+		}
+	}
+
+	if (ND[3].BC == 1 && ND[0].BC == 1) {
+		Elem4::Surface* surface = new Elem4::Surface(e->npc, 3);
+		for (int h = 0; h < surface->npc; h++) {
+			surface->surface_N[0] = surface->N2[h];
+			surface->surface_N[1] = 0;
+			surface->surface_N[2] = 0;
+			surface->surface_N[3] = surface->N1[h];
+
+			for (int i = 0; i < 4; i++) {
+				for (int j = 0; j < 4; j++) {
+					bc_matrix[i][j] += surface->surface_N[i] * surface->surface_N[j] * 25 * (0.0333333 / 2.);
+				}
+			}
+		}
+	}
+	
+	system("pause");
+
+	for (int i = 0; i < 4; i++) {
+		for (int j = 0; j < 4; j++) {
+			local_H[i][j] += bc_matrix[i][j];
+		}
+	}
+
 	return 0;
 }
 Element::Element() {

@@ -14,11 +14,16 @@ int main()
 	SoE* soe = new SoE(GB);
 
 	for (int i = 0; i < GB->nE; i++) {
-		double xy[2][4] = { ND[Elem[i].ID[0]].x,ND[Elem[i].ID[1]].x,ND[Elem[i].ID[2]].x,ND[Elem[i].ID[3]].x,
-							ND[Elem[i].ID[0]].y,ND[Elem[i].ID[1]].y,ND[Elem[i].ID[2]].y,ND[Elem[i].ID[3]].y, };
+		/*double xy[2][4] = { ND[Elem[i].ID[0]].x,ND[Elem[i].ID[1]].x,ND[Elem[i].ID[2]].x,ND[Elem[i].ID[3]].x,
+							ND[Elem[i].ID[0]].y,ND[Elem[i].ID[1]].y,ND[Elem[i].ID[2]].y,ND[Elem[i].ID[3]].y, };*/
 
-		Elem[i].initialize_H_and_C(xy, e,GB);
+		double xy[2][4] = { 0,0.033333,0.033333,0,
+							0,0,0.033333,0.033333 };
 
+		Node ND_tab[4] = { ND[Elem[i].ID[0]] ,ND[Elem[i].ID[1]] ,ND[Elem[i].ID[2]] ,ND[Elem[i].ID[3]] };
+		Elem[i].initialize_H_and_C(xy, e,GB, ND_tab);
+		//print_M(Elem[i].local_C);
+		//cout << endl;
 		for (int k = 0; k < 4; k++) {
 			for (int l = 0; l < 4; l++) {
 				soe->global_H[Elem[i].ID[k]][Elem[i].ID[l]] += Elem[i].local_H[k][l];

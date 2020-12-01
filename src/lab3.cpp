@@ -80,6 +80,58 @@ Elem4::Elem4(int a_npc) {
 	//}
 }
 
+Elem4::Surface::Surface(int a_npc, int x){
+	this->npc = sqrt(a_npc);
+	switch (this->npc)
+	{
+	case 2:
+		switch (x)
+		{
+		case 0:
+			pcKsi = new double[npc] {-1. / sqrt(3), 1. / sqrt(3)};
+			pcEta = new double[npc] {-1., -1.};
+			wpc = new double[npc] {1., 1.};
+			N1 = new double[npc] {1. / 4 * (1 - pcKsi[0]) * (1 - pcEta[0]), 1. / 4 * (1 - pcKsi[1]) * (1 - pcEta[1]) };
+			N2 = new double[npc] {1. / 4 * (1 + pcKsi[0]) * (1 - pcEta[0]), 1. / 4 * (1 + pcKsi[1]) * (1 - pcEta[1]) };
+			break;
+
+		case 1:
+			pcKsi = new double[npc] {1., 1.};
+			pcEta = new double[npc] {-1. / sqrt(3), 1. / sqrt(3)};
+			wpc = new double[npc] {1., 1.};
+			N1 = new double[npc] {1. / 4 * (1 + pcKsi[0]) * (1 - pcEta[0]), 1. / 4 * (1 + pcKsi[1]) * (1 - pcEta[1]) };
+			N2 = new double[npc] {1. / 4 * (1 + pcKsi[0]) * (1 + pcEta[0]), 1. / 4 * (1 + pcKsi[1]) * (1 + pcEta[1]) };
+			break;
+
+		case 2:
+			pcKsi = new double[npc] {1. / sqrt(3), -1. / sqrt(3)};
+			pcEta = new double[npc] {1., 1.};
+			wpc = new double[npc] {1., 1.};
+			N1 = new double[npc] {1. / 4 * (1 + pcKsi[0]) * (1 + pcEta[0]), 1. / 4 * (1 + pcKsi[1]) * (1 + pcEta[1]) };
+			N2 = new double[npc] {1. / 4 * (1 - pcKsi[0]) * (1 + pcEta[0]), 1. / 4 * (1 - pcKsi[1]) * (1 + pcEta[1]) };
+			break;
+
+		case 3:
+			pcKsi = new double[npc] {-1., -1.};
+			pcEta = new double[npc] {1. / sqrt(3), -1. / sqrt(3)};
+			wpc = new double[npc] {1., 1.};
+			N1 = new double[npc] {1. / 4 * (1 - pcKsi[0]) * (1 + pcEta[0]), 1. / 4 * (1 - pcKsi[1]) * (1 + pcEta[1]) };
+			N2 = new double[npc] {1. / 4 * (1 - pcKsi[0]) * (1 - pcEta[0]), 1. / 4 * (1 - pcKsi[1]) * (1 - pcEta[1]) };
+			break;
+
+		default:
+			break;
+		}
+		break;
+
+	case 3:
+		break;
+
+	default:
+		break;
+	}
+}
+
 int fill_J(double J[2][2], Elem4* e, double xy[2][4], int i) {
 	for (int k = 0; k < 4; k++) {
 		J[0][0] += e->tab_ksi[i][k] * xy[0][k];
@@ -119,3 +171,5 @@ void print_M(double M[4][4])
 		}
 	}
 }
+
+
