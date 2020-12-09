@@ -17,6 +17,8 @@ int GlobalData::ReadFromFile()
 			plik >> ro;
 			plik >> cp;
 			plik >> t0;
+			plik >> alfa;
+			plik >> totoczenia;
 		}
 		plik.close();
 	}
@@ -32,6 +34,8 @@ int GlobalData::ReadFromFile()
 		ro = 7800;
 		cp = 700;
 		t0 = 100;
+		alfa = 25;
+		totoczenia = 1200;
 	}
 
 	return 0;
@@ -56,14 +60,16 @@ void meshInit(GlobalData* GB, Node* ND, Element* Elem)
 	GB->temp_n = 0;
 	for (int i = 0; i < GB->nW; i++) {
 		for (int j = 0; j < GB->nH; j++) {
+			ND[GB->temp_n].t0 = GB->t0;
+
 			ND[GB->temp_n].x = i * GB->dx;
 			ND[GB->temp_n].y = j * GB->dy;
 
-			if (i == 0 || i == GB->nW-1 || j == 0 || j == GB->nH-1) {
+			if (i == 0 || i == GB->nW - 1 || j == 0 || j == GB->nH - 1) {
 				ND[GB->temp_n].BC = 1;
 			}
 			else {
-			ND[GB->temp_n].BC = 0;
+				ND[GB->temp_n].BC = 0;
 			}
 			GB->temp_n++;
 		}
@@ -92,7 +98,7 @@ void meshPrint(GlobalData* GB, Node* ND, Element* Elem)
 	}
 }
 
-int Element::initialize_H_and_C(double xy[2][4], Elem4* e, GlobalData* GB, Node ND[4]) {
+int Element::initialize_H_C_P(double xy[2][4], Elem4* e, GlobalData* GB, Node ND[4]) {
 	double J[2][2] = { 0.,0.,0.,0. };
 	double detJ;
 
@@ -174,11 +180,12 @@ int Element::initialize_H_and_C(double xy[2][4], Elem4* e, GlobalData* GB, Node 
 		}
 	}
 
-	cout << ND[0].BC << endl;
-	cout << ND[1].BC << endl;
-	cout << ND[2].BC << endl;
-	cout << ND[3].BC << endl;
+	//cout << ND[0].BC << endl;
+	//cout << ND[1].BC << endl;
+	//cout << ND[2].BC << endl;
+	//cout << ND[3].BC << endl;
 
+	//boundary condition
 	double bc_matrix[4][4];
 	for (int i = 0; i < 4; i++) {
 		for (int j = 0; j < 4; j++) {
@@ -186,6 +193,32 @@ int Element::initialize_H_and_C(double xy[2][4], Elem4* e, GlobalData* GB, Node 
 		}
 	}
 
+	for (int p = 0; p < 4; p++) {
+		if ((ND[p].BC == 1 && ND[(p + 1) % 4].BC == 1)) {
+			Elem4::Surface* surface = new Elem4::Surface(e->npc, p);
+			double temp_P[4]{ 0.,0.,0.,0. };
+			for (int n = 0; n < surface->npc; n++) {
+				surface->surface_N[p] = surface->N1[n];
+				surface->surface_N[(p + 1) % 4] = surface->N2[n];
+
+				for (int i = 0; i < 4; i++) {
+					for (int j = 0; j < 4; j++) {
+						bc_matrix[i][j] += surface->surface_N[i] * surface->surface_N[j] * surface->wpc[n] * GB->alfa * GB->dx / 2; //detJ do poprawy, wagi?
+					}
+				}
+
+				for (int i = 0; i < 4; i++) {
+					temp_P[i] += surface->surface_N[i] * surface->wpc[n];
+				}
+			}
+
+			for (int i = 0; i < 4; i++) {
+				local_P[i] += temp_P[i] * -(GB->alfa) * GB->totoczenia * GB->dx / 2; //detJ do poprawy, wagi?
+			}
+		}
+	}
+	
+	/*
 	if (ND[0].BC == 1 && ND[1].BC == 1) {
 		Elem4::Surface* surface = new Elem4::Surface(e->npc, 0);
 		for (int h = 0; h < surface->npc; h++) {
@@ -196,13 +229,17 @@ int Element::initialize_H_and_C(double xy[2][4], Elem4* e, GlobalData* GB, Node 
 
 			for (int i = 0; i < 4; i++) {
 				for (int j = 0; j < 4; j++) {
-					bc_matrix[i][j] += surface->surface_N[i] * surface->surface_N[j] * 25 * (0.0333333 / 2.);
+					bc_matrix[i][j] += surface->surface_N[i] * surface->surface_N[j] * surface->wpc[h] * GB->alfa * (0.0333333 / 2.); //detJ do poprawy
 				}
+			}
+
+			for (int i = 0; i < 4; i++) {
+				local_P[i] += surface->surface_N[i] * surface->wpc[h];
 			}
 		}
 	}
 	
-
+	system("pause");
 	if (ND[1].BC == 1 && ND[2].BC == 1) {
 		Elem4::Surface* surface = new Elem4::Surface(e->npc, 1);
 		for (int h = 0; h < surface->npc; h++) {
@@ -213,7 +250,7 @@ int Element::initialize_H_and_C(double xy[2][4], Elem4* e, GlobalData* GB, Node 
 
 			for (int i = 0; i < 4; i++) {
 				for (int j = 0; j < 4; j++) {
-					bc_matrix[i][j] += surface->surface_N[i] * surface->surface_N[j] * 25 * (0.0333333 / 2.);
+					bc_matrix[i][j] += surface->surface_N[i] * surface->surface_N[j] * 25 * (0.0333333 / 2.); // *w1*w2?
 				}
 			}
 		}
@@ -250,8 +287,7 @@ int Element::initialize_H_and_C(double xy[2][4], Elem4* e, GlobalData* GB, Node 
 			}
 		}
 	}
-	
-	system("pause");
+	*/
 
 	for (int i = 0; i < 4; i++) {
 		for (int j = 0; j < 4; j++) {
@@ -275,9 +311,14 @@ Element::Element() {
 			local_C[i][j] = 0;
 		}
 	}
+
+	//filling P with zeros
+	for (int i = 0; i < 4; i++) {
+		local_P[i] = 0;
+	}
 }
 
-SoE::SoE(GlobalData* GB){
+SoE::SoE(GlobalData* GB) {
 	//init & filling global_H and global_C with zeros
 	global_H = new double* [GB->nN];
 	for (int i = 0; i < GB->nN; ++i) {
@@ -292,5 +333,11 @@ SoE::SoE(GlobalData* GB){
 			global_H[k][l] = 0;
 			global_C[k][l] = 0;
 		}
+	}
+
+	//init & filling global_P with zeros
+	global_P = new double[GB->nN];
+	for (int i = 0; i < GB->nN; ++i) {
+		global_P[i] = 0;
 	}
 }

@@ -82,6 +82,113 @@ Elem4::Elem4(int a_npc) {
 
 Elem4::Surface::Surface(int a_npc, int x){
 	this->npc = sqrt(a_npc);
+
+	switch (x)
+	{
+	case 0:
+		switch (npc)
+		{
+		case 2:
+			pcKsi = new double[npc] {-1. / sqrt(3), 1. / sqrt(3)};
+			pcEta = new double[npc] {-1., -1.};
+			wpc = new double[npc] {1., 1.};
+			break;
+		case 3:
+			pcKsi = new double[npc] {-sqrt(3. / 5), 0., sqrt(3. / 5)};
+			pcEta = new double[npc] {-1., -1., -1.};
+			wpc = new double[npc] {5. / 9, 8. / 9, 5. / 9};
+			break;
+		default:
+			break;
+		}
+
+		N1 = new double[npc];
+		N2 = new double[npc];
+		for (int i = 0; i < npc; i++) {
+			N1[i] = 1. / 4 * (1 - pcKsi[i]) * (1 - pcEta[i]);
+			N2[i] = 1. / 4 * (1 + pcKsi[i]) * (1 - pcEta[i]);
+		}
+
+		break;
+	case 1:
+		switch (npc)
+		{
+		case 2:
+			pcKsi = new double[npc] {1., 1.};
+			pcEta = new double[npc] {-1. / sqrt(3), 1. / sqrt(3)};
+			wpc = new double[npc] {1., 1.};
+			break;
+		case 3:
+			pcKsi = new double[npc] {1., 1., 1.};
+			pcEta = new double[npc] {-sqrt(3. / 5), 0., sqrt(3. / 5)};
+			wpc = new double[npc] {5. / 9, 8. / 9, 5. / 9};
+			break;
+		default:
+			break;
+		}
+
+		N1 = new double[npc];
+		N2 = new double[npc];
+		for (int i = 0; i < npc; i++) {
+			N1[i] = 1. / 4 * (1 + pcKsi[i]) * (1 - pcEta[i]);
+			N2[i] = 1. / 4 * (1 + pcKsi[i]) * (1 + pcEta[i]);
+		}
+
+		break;
+	case 2:
+		switch (npc)
+		{
+		case 2:
+			pcKsi = new double[npc] {1. / sqrt(3), -1. / sqrt(3)};
+			pcEta = new double[npc] {1., 1.};
+			wpc = new double[npc] {1., 1.};
+			break;
+		case 3:
+			pcKsi = new double[npc] {sqrt(3. / 5), 0., -sqrt(3. / 5)};
+			pcEta = new double[npc] {1., 1., 1.};
+			wpc = new double[npc] {5. / 9, 8. / 9, 5. / 9};
+			break;
+		default:
+			break;
+		}
+
+		N1 = new double[npc];
+		N2 = new double[npc];
+		for (int i = 0; i < npc; i++) {
+			N1[i] = 1. / 4 * (1 + pcKsi[i]) * (1 + pcEta[i]);
+			N2[i] = 1. / 4 * (1 - pcKsi[i]) * (1 + pcEta[i]);
+		}
+
+		break;
+	case 3:
+		switch (npc)
+		{
+		case 2:
+			pcKsi = new double[npc] {-1., -1.};
+			pcEta = new double[npc] {1. / sqrt(3), -1. / sqrt(3)};
+			wpc = new double[npc] {1., 1.};
+			break;
+		case 3:
+			pcKsi = new double[npc] {-1., -1., -1.};
+			pcEta = new double[npc] {sqrt(3. / 5), 0., -sqrt(3. / 5)};
+			wpc = new double[npc] {5. / 9, 8. / 9, 5. / 9};
+			break;
+		default:
+			break;
+		}
+
+		N1 = new double[npc];
+		N2 = new double[npc];
+		for (int i = 0; i < npc; i++) {
+			N1[i] = 1. / 4 * (1 - pcKsi[i]) * (1 + pcEta[i]);
+			N2[i] = 1. / 4 * (1 - pcKsi[i]) * (1 - pcEta[i]);
+		}
+
+		break;
+	default:
+		break;
+	}
+	/*
 	switch (this->npc)
 	{
 	case 2:
@@ -91,32 +198,56 @@ Elem4::Surface::Surface(int a_npc, int x){
 			pcKsi = new double[npc] {-1. / sqrt(3), 1. / sqrt(3)};
 			pcEta = new double[npc] {-1., -1.};
 			wpc = new double[npc] {1., 1.};
-			N1 = new double[npc] {1. / 4 * (1 - pcKsi[0]) * (1 - pcEta[0]), 1. / 4 * (1 - pcKsi[1]) * (1 - pcEta[1]) };
-			N2 = new double[npc] {1. / 4 * (1 + pcKsi[0]) * (1 - pcEta[0]), 1. / 4 * (1 + pcKsi[1]) * (1 - pcEta[1]) };
+			N1 = new double[npc];
+			N2 = new double[npc];
+			for (int i = 0; i < npc; i++) {
+				N1[i] = 1. / 4 * (1 - pcKsi[i]) * (1 - pcEta[i]);
+				N2[i] = 1. / 4 * (1 + pcKsi[i]) * (1 - pcEta[i]);
+			}
+			//N1 = new double[npc] {1. / 4 * (1 - pcKsi[0]) * (1 - pcEta[0]), 1. / 4 * (1 - pcKsi[1]) * (1 - pcEta[1]) };
+			//N2 = new double[npc] {1. / 4 * (1 + pcKsi[0]) * (1 - pcEta[0]), 1. / 4 * (1 + pcKsi[1]) * (1 - pcEta[1]) };
 			break;
 
 		case 1:
 			pcKsi = new double[npc] {1., 1.};
 			pcEta = new double[npc] {-1. / sqrt(3), 1. / sqrt(3)};
 			wpc = new double[npc] {1., 1.};
-			N1 = new double[npc] {1. / 4 * (1 + pcKsi[0]) * (1 - pcEta[0]), 1. / 4 * (1 + pcKsi[1]) * (1 - pcEta[1]) };
-			N2 = new double[npc] {1. / 4 * (1 + pcKsi[0]) * (1 + pcEta[0]), 1. / 4 * (1 + pcKsi[1]) * (1 + pcEta[1]) };
+			N1 = new double[npc];
+			N2 = new double[npc];
+			for (int i = 0; i < npc; i++) {
+				N1[i] = 1. / 4 * (1 + pcKsi[i]) * (1 - pcEta[i]);
+				N2[i] = 1. / 4 * (1 + pcKsi[i]) * (1 + pcEta[i]);
+			}
+			//N1 = new double[npc] {1. / 4 * (1 + pcKsi[0]) * (1 - pcEta[0]), 1. / 4 * (1 + pcKsi[1]) * (1 - pcEta[1]) };
+			//N2 = new double[npc] {1. / 4 * (1 + pcKsi[0]) * (1 + pcEta[0]), 1. / 4 * (1 + pcKsi[1]) * (1 + pcEta[1]) };
 			break;
 
 		case 2:
 			pcKsi = new double[npc] {1. / sqrt(3), -1. / sqrt(3)};
 			pcEta = new double[npc] {1., 1.};
 			wpc = new double[npc] {1., 1.};
-			N1 = new double[npc] {1. / 4 * (1 + pcKsi[0]) * (1 + pcEta[0]), 1. / 4 * (1 + pcKsi[1]) * (1 + pcEta[1]) };
-			N2 = new double[npc] {1. / 4 * (1 - pcKsi[0]) * (1 + pcEta[0]), 1. / 4 * (1 - pcKsi[1]) * (1 + pcEta[1]) };
+			N1 = new double[npc];
+			N2 = new double[npc];
+			for (int i = 0; i < npc; i++) {
+				N1[i] = 1. / 4 * (1 + pcKsi[i]) * (1 + pcEta[i]);
+				N2[i] = 1. / 4 * (1 - pcKsi[i]) * (1 + pcEta[i]);
+			}
+			//N1 = new double[npc] {1. / 4 * (1 + pcKsi[0]) * (1 + pcEta[0]), 1. / 4 * (1 + pcKsi[1]) * (1 + pcEta[1]) };
+			//N2 = new double[npc] {1. / 4 * (1 - pcKsi[0]) * (1 + pcEta[0]), 1. / 4 * (1 - pcKsi[1]) * (1 + pcEta[1]) };
 			break;
 
 		case 3:
 			pcKsi = new double[npc] {-1., -1.};
 			pcEta = new double[npc] {1. / sqrt(3), -1. / sqrt(3)};
 			wpc = new double[npc] {1., 1.};
-			N1 = new double[npc] {1. / 4 * (1 - pcKsi[0]) * (1 + pcEta[0]), 1. / 4 * (1 - pcKsi[1]) * (1 + pcEta[1]) };
-			N2 = new double[npc] {1. / 4 * (1 - pcKsi[0]) * (1 - pcEta[0]), 1. / 4 * (1 - pcKsi[1]) * (1 - pcEta[1]) };
+			N1 = new double[npc];
+			N2 = new double[npc];
+			for (int i = 0; i < npc; i++) {
+				N1[i] = 1. / 4 * (1 - pcKsi[i]) * (1 + pcEta[i]);
+				N2[i] = 1. / 4 * (1 - pcKsi[i]) * (1 - pcEta[i]);
+			}
+			//N1 = new double[npc] {1. / 4 * (1 - pcKsi[0]) * (1 + pcEta[0]), 1. / 4 * (1 - pcKsi[1]) * (1 + pcEta[1]) };
+			//N2 = new double[npc] {1. / 4 * (1 - pcKsi[0]) * (1 - pcEta[0]), 1. / 4 * (1 - pcKsi[1]) * (1 - pcEta[1]) };
 			break;
 
 		default:
@@ -125,11 +256,13 @@ Elem4::Surface::Surface(int a_npc, int x){
 		break;
 
 	case 3:
+
 		break;
 
 	default:
 		break;
 	}
+	*/
 }
 
 int fill_J(double J[2][2], Elem4* e, double xy[2][4], int i) {

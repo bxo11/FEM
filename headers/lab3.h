@@ -28,7 +28,7 @@ struct Elem4
 		double* wpc;
 		double* N1;
 		double* N2;
-		double surface_N[4];
+		double surface_N[4]{0,0,0,0};
 		
 		Surface(int npc, int x);
 	};
