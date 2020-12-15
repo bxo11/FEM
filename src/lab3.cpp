@@ -305,4 +305,97 @@ void print_M(double M[4][4])
 	}
 }
 
+void Is_zero(int n, double** matrix) {
+	for (int i = 0; i < n; i++) {
+		if (matrix[i][i] == 0) {
+			cout << "Na przekatnej wystepuje zero" << endl;
+			system("pause");
+		}
+	}
+}
 
+double * Gauss_elimination(int n, double** H, double* P) {
+	double** matrix;
+	double a;
+	double ulamek;
+	double* x;
+
+	matrix = new double* [n]; //wiersze
+	for (int i = 0; i < n; i++) {
+		matrix[i] = new double[n + 1];
+	}
+
+	for (int i = 0; i < n; i++) {
+		for (int j = 0; j < n + 1; j++) {
+			if (j == n) {
+				matrix[i][j] = P[i];
+			}
+			else {
+				matrix[i][j] = H[i][j];
+			}
+		}
+	}
+
+	/*cout << endl;
+	cout << "Podana macierz: " << endl;
+	for (int i = 0; i < n; i++) {
+		for (int j = 0; j < n + 1; j++) {
+			cout << matrix[i][j] << "	";
+		}
+		cout << endl;
+	}*/
+
+	// odejmowanie
+	for (int j = 0; j < n - 1; j++) {
+		for (int i = 1 + j; i < n; i++) {
+			ulamek = matrix[i][j] / matrix[j][j];
+
+			for (int k = 0; k < n + 1; k++) {
+				matrix[i][k] -= matrix[j][k] * ulamek;
+			}
+
+			Is_zero(n, matrix);
+		}
+		/*cout << endl;
+		cout << "Kolejny krok: " << endl;
+		for (int i = 0; i < n; i++) {
+			for (int j = 0; j < n + 1; j++) {
+				cout << matrix[i][j] << "	";
+			}
+			cout << endl;
+		}*/
+	}
+	/*cout << endl;
+	cout << "Macierz po dzialaniach arytmetycznych: " << endl;
+	for (int i = 0; i < n; i++) {
+		for (int j = 0; j < n + 1; j++) {
+			cout << matrix[i][j] << "	";
+		}
+		cout << endl;
+	}*/
+
+	x = new double[n];
+	double licznik;
+	double temp;
+	for (int w = n, i = 0; i < n; i++, w--) {
+		if (w == n) {
+			x[i] = matrix[n - 1][n] / matrix[n - 1][n - 1];
+			continue;
+		}
+
+		licznik = matrix[w - 1][n];
+
+		for (int j = 0; j < i; j++) {
+			licznik -= matrix[w - 1][n - j - 1] * x[j];
+		}
+		x[i] = licznik / matrix[w - 1][w - 1];
+	}
+
+	/*cout << endl;
+	cout << "Rozwiazania: " << endl;
+	for (int i = 0; i < n; i++) {
+		cout << "x" << i + 1 << ": " << x[i] << "	";
+	}*/
+
+	return x;
+}

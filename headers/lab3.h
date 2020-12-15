@@ -42,4 +42,6 @@ int reverse_J(double J[2][2]);
 void print_M(double J[2][2]);
 void print_M(double J[4][4]);
 
+void Is_zero(int n, double** matrix);
+double * Gauss_elimination(int n, double** H, double* P);
 #endif

@@ -99,6 +99,24 @@ void meshPrint(GlobalData* GB, Node* ND, Element* Elem)
 }
 
 int Element::initialize_H_C_P(double xy[2][4], Elem4* e, GlobalData* GB, Node ND[4]) {
+	//filling H with zeros
+	for (int i = 0; i < 4; i++) {
+		for (int j = 0; j < 4; j++) {
+			local_H[i][j] = 0;
+		}
+	}
+
+	//filling C with zeros
+	for (int i = 0; i < 4; i++) {
+		for (int j = 0; j < 4; j++) {
+			local_C[i][j] = 0;
+		}
+	}
+
+	//filling P with zeros
+	for (int i = 0; i < 4; i++) {
+		local_P[i] = 0;
+	}
 	double J[2][2] = { 0.,0.,0.,0. };
 	double detJ;
 
@@ -297,6 +315,7 @@ int Element::initialize_H_C_P(double xy[2][4], Elem4* e, GlobalData* GB, Node ND
 
 	return 0;
 }
+
 Element::Element() {
 	//filling H with zeros
 	for (int i = 0; i < 4; i++) {
