@@ -1,4 +1,4 @@
-#include "../headers/mesh(lab1).h"
+#include "../headers/part1.h"
 
 int GlobalData::ReadFromFile()
 {
@@ -8,7 +8,7 @@ int GlobalData::ReadFromFile()
 	{
 		while (!plik.eof())
 		{
-			plik >> local_H;
+			plik >> H;
 			plik >> W;
 			plik >> nH;
 			plik >> nW;
@@ -25,7 +25,7 @@ int GlobalData::ReadFromFile()
 	else {
 		cout << "data.txt file is missing, reading default data" << endl;
 		system("pause");
-		local_H = 0.1;
+		H = 0.1;
 		W = 0.1;
 		nH = 4;
 		nW = 4;
@@ -34,7 +34,7 @@ int GlobalData::ReadFromFile()
 		ro = 7800;
 		cp = 700;
 		t0 = 100;
-		alfa = 25;
+		alfa = 300;
 		totoczenia = 1200;
 	}
 
@@ -48,7 +48,7 @@ GlobalData::GlobalData()
 	GB->ReadFromFile();
 	npc = npc * npc;
 
-	dy = GB->local_H / (GB->nH - 1);
+	dy = GB->H / (GB->nH - 1);
 	dx = GB->W / (GB->nW - 1);
 
 	GB->nE = (GB->nH - 1) * (GB->nW - 1);
@@ -146,6 +146,7 @@ int Element::initialize_H_C_P(double xy[2][4], Elem4* e, GlobalData* GB, Node ND
 		//cout << "reverse";
 		//print_M(J);
 
+		//dN/dx
 		wynik_x[0] = (1. / detJ) * (J[0][0] * e->tab_ksi[x][0] + J[0][1] * e->tab_eta[x][0]);
 		wynik_x[1] = (1. / detJ) * (J[0][0] * e->tab_ksi[x][1] + J[0][1] * e->tab_eta[x][1]);
 		wynik_x[2] = (1. / detJ) * (J[0][0] * e->tab_ksi[x][2] + J[0][1] * e->tab_eta[x][2]);
@@ -183,7 +184,7 @@ int Element::initialize_H_C_P(double xy[2][4], Elem4* e, GlobalData* GB, Node ND
 		for (int i = 0; i < 4; i++) {
 			for (int j = 0; j < 4; j++) {
 				m_end[i][j] = my[i][j] + mx[i][j];
-				m_end[i][j] *= detJ * GB->k;
+				//m_end[i][j] *= detJ * GB->k;
 			}
 		}
 
@@ -192,7 +193,7 @@ int Element::initialize_H_C_P(double xy[2][4], Elem4* e, GlobalData* GB, Node ND
 
 		for (int i = 0; i < 4; i++) {
 			for (int j = 0; j < 4; j++) {
-				local_H[i][j] += m_end[i][j] * e->w1[x] * e->w2[x];
+				local_H[i][j] += m_end[i][j] * e->w1[x] * e->w2[x] * detJ * GB->k;
 				local_C[i][j] += e->N[x][i] * e->N[x][j] * GB->cp * GB->ro * detJ * e->w1[x] * e->w2[x];
 			}
 		}
@@ -215,13 +216,14 @@ int Element::initialize_H_C_P(double xy[2][4], Elem4* e, GlobalData* GB, Node ND
 		if ((ND[p].BC == 1 && ND[(p + 1) % 4].BC == 1)) {
 			Elem4::Surface* surface = new Elem4::Surface(e->npc, p);
 			double temp_P[4]{ 0.,0.,0.,0. };
+
 			for (int n = 0; n < surface->npc; n++) {
 				surface->surface_N[p] = surface->N1[n];
 				surface->surface_N[(p + 1) % 4] = surface->N2[n];
 
 				for (int i = 0; i < 4; i++) {
 					for (int j = 0; j < 4; j++) {
-						bc_matrix[i][j] += surface->surface_N[i] * surface->surface_N[j] * surface->wpc[n] * GB->alfa * GB->dx / 2; //detJ do poprawy, wagi?
+						bc_matrix[i][j] += surface->surface_N[i] * surface->surface_N[j] * surface->wpc[n] * GB->alfa * GB->dx / 2; 
 					}
 				}
 
@@ -231,7 +233,7 @@ int Element::initialize_H_C_P(double xy[2][4], Elem4* e, GlobalData* GB, Node ND
 			}
 
 			for (int i = 0; i < 4; i++) {
-				local_P[i] += temp_P[i] * -(GB->alfa) * GB->totoczenia * GB->dx / 2; //detJ do poprawy, wagi?
+				local_P[i] += temp_P[i] * -(GB->alfa) * GB->totoczenia * GB->dx / 2; 
 			}
 		}
 	}

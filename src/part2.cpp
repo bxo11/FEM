@@ -1,5 +1,5 @@
-#include "../headers/lab3.h"
-#include "../headers/mesh(lab1).h"
+#include "../headers/part2.h"
+#include "../headers/part1.h"
 
 Elem4::Elem4(int a_npc) {
 	this->npc = a_npc;

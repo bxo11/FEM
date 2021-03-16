@@ -1,5 +1,8 @@
-﻿#include "../headers/lab3.h"
-#include "../headers/mesh(lab1).h"
+﻿#include "../headers/part2.h"
+#include "../headers/part1.h"
+
+#define iterations 20
+#define tau 1
 
 using namespace std;
 
@@ -14,7 +17,10 @@ int main()
 	SoE* soe = new SoE(GB);
 	double* tx = new double[GB->nN];
 
-	for (int z = 0; z < 20; z++) {
+	double Asr = GB->k / (GB->cp * GB->ro);
+	GB->dTime = pow(GB->W / GB->nW, 2.) / (0.5 * Asr);
+
+	for (int z = 0; z < iterations; z++) {
 
 		for (int k = 0; k < GB->nN; k++) {
 			for (int l = 0; l < GB->nN; l++) {
@@ -69,7 +75,7 @@ int main()
 
 		for (int k = 0; k < GB->nN; k++) {
 			for (int l = 0; l < GB->nN; l++) {
-				soe->global_H[k][l] += soe->global_C[k][l] / 50;
+				soe->global_H[k][l] += soe->global_C[k][l] / tau;
 			}
 		}
 
@@ -92,7 +98,7 @@ int main()
 		for (int k = 0; k < GB->nN; k++) {
 
 			for (int l = 0; l < GB->nN; l++) {
-				temp_tab[k] += ND[l].t0 * soe->global_C[k][l] / 50;
+				temp_tab[k] += ND[l].t0 * soe->global_C[k][l] / tau;
 			}
 			soe->global_P[k] += temp_tab[k];
 		}

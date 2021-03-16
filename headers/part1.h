@@ -2,7 +2,7 @@
 #define LAB1_H
 
 #include <fstream>
-#include "lab3.h"
+#include "part2.h"
 using namespace std;
 
 struct Node
@@ -16,8 +16,8 @@ struct GlobalData
 	double dx, dy;
 	int temp_n;
 
-	double local_H, W, nH, nW, npc, k, ro, cp, t0 , alfa, totoczenia; //from file
-	double nE, nN;
+	double H, W, nH, nW, npc, k, ro, cp, t0 , alfa, totoczenia; //from file
+	double nE, nN, dTime;
 	int ReadFromFile();
 	GlobalData();
 };
